@@ -24,6 +24,8 @@ function App() {
 			<Routes>
 				<Route exact path='/form' element={<Dashboard />} />
 				<Route exact path='/table' element={<Dashboard />} />
+				<Route exact path='/profile' element={<Dashboard />} />
+				<Route exact path='/shram' element={<Dashboard />} />
 				<Route exact path='/' element={<Dashboard />} />
 			</Routes>
 		</>

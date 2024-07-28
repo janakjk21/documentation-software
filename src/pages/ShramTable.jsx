@@ -1,5 +1,3 @@
-// DataTable.js
-
 import React, { useState } from 'react';
 import {
 	FaCheck,
@@ -13,28 +11,28 @@ import {
 	FaPencilAlt,
 	FaTrash,
 } from 'react-icons/fa';
-import Tablecomponent from '../components/Tablecomponent';
-import ModalInitialUser from '../components/Modalintialuser';
+import ShramRelated from '../components/ShramRelated';
+import ShramModal from '../components/Shrammodal';
 import { Link } from 'react-router-dom';
 import OptionsTable from '../components/OptionsTable';
 
-const initialData = [
+const initialShramData = [
 	{
-		passportNo: 'A1234567',
+		id: 1,
 		name: 'John Doe',
-		avatar: 'https://i.pravatar.cc/40?img=1', // Example avatar URL
-		medical: false,
-		originalPassport: false,
-		policeReport: false,
-		photo: false,
-		video: false,
-		certificate: false,
+		readyToShram: false,
+		shramApplied: false,
+		shramReceived: 'https://i.pravatar.cc/40?img=1', // Example URL for received image
+		readyToFlight: false,
+		ticketConfirmed: 'https://i.pravatar.cc/40?img=2', // Example URL for ticket image
+		flightCompleted: false,
 	},
 	// Add more rows as needed
 ];
 
-function DataTable() {
-	const [data, setData] = useState(initialData);
+function ShramTable() {
+	const [data, setData] = useState(initialShramData);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const handleCheckboxChange = (index, field) => {
 		const updatedData = [...data];
@@ -43,22 +41,18 @@ function DataTable() {
 	};
 
 	const handleCreate = () => {
-		// Logic for creating a new row
 		console.log('Create new entry');
 	};
 
 	const handleUpdate = (index) => {
-		// Logic for updating a row
 		console.log(`Update entry at row ${index}`);
 	};
 
 	const handleDelete = (index) => {
-		// Logic for deleting a row
 		const updatedData = data.filter((_, i) => i !== index);
 		setData(updatedData);
 		console.log(`Deleted entry at row ${index}`);
 	};
-	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const openModal = () => setIsModalOpen(true);
 	const closeModal = () => setIsModalOpen(false);
@@ -67,11 +61,11 @@ function DataTable() {
 		<div className='p-4'>
 			<OptionsTable openModal={openModal} />
 			<hr className='border-t border-gray-300 my-4' />
-			{<Tablecomponent data={initialData} />}
+			{<ShramRelated data={data} />}
 
-			<ModalInitialUser isOpen={isModalOpen} onClose={closeModal} />
+			<ShramModal isOpen={isModalOpen} onClose={closeModal} />
 		</div>
 	);
 }
 
-export default DataTable;
+export default ShramTable;
