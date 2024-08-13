@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import CompanyProfileCard from '../components/CompanyProfileCard';
 import CompanyProfileModal from '../components/CompanyProfileModal';
-
-export default function Componydemand() {
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+export default function Componydemand({ id }) {
 	const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+	const companyProfiles = useSelector((state) => state.companyProfile); // Example selector for company profiles
 
 	const handleOpenModal = () => setIsModalOpen(true);
 	const handleCloseModal = () => setIsModalOpen(false);
@@ -12,7 +14,10 @@ export default function Componydemand() {
 		console.log('Company data saved:', data);
 		// Optionally, you could update the state or send data to an API here
 	};
-
+	const filteredProfiles = companyProfiles.filter(
+		(profile) => profile.countryId === id
+	);
+	console.log('id', filteredProfiles);
 	return (
 		<div className='p-4'>
 			<div className='sm:flex'>
@@ -56,21 +61,19 @@ export default function Componydemand() {
 					</a>
 				</div>
 			</div>
-
 			<div className='container mx-auto p-4'>
 				<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-					<CompanyProfileCard />
-					<CompanyProfileCard />
-					<CompanyProfileCard />
-
-					{/* Add more CompanyProfileCard components as needed */}
+					{filteredProfiles.map((profile, index) => (
+						<CompanyProfileCard key={index} profile={profile} id={id} />
+					))}
 				</div>
 			</div>
-
+			9
 			<CompanyProfileModal
 				isOpen={isModalOpen}
 				onClose={handleCloseModal}
 				onSave={handleSave}
+				id={id}
 			/>
 		</div>
 	);

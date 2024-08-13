@@ -3,27 +3,23 @@ import { useDispatch } from 'react-redux';
 import {
 	updateUserStatus,
 	deleteAllUserData,
-	deleteUserData,
+	updateVisaStatus,
 } from '../redux/tableSlice';
 import { Link } from 'react-router-dom';
-import { updateState } from '../redux/visaStatusSlice';
 
-const Tablecomponent = ({ data, openModal }) => {
+export default function Selectedtablecomponent({ data }) {
 	const [newData, setNewData] = useState([data]);
-
+	const [formData, setFormData] = useState({});
+	const [slicer, setSlicer] = useState([]);
 	const dispatch = useDispatch();
 	const handleDeleteAll = () => {
 		dispatch(deleteAllUserData());
 	};
 
-	const handleStatusChange = (index, value, id) => {
+	const handleVisaStatusChange = (index, value, id) => {
 		// Update the form data
 
-		dispatch(updateUserStatus({ id: id, status: value }));
-	};
-	const handleEdit = (id) => {
-		dispatch(updateState({ type: 'userId', value: id }));
-		openModal();
+		dispatch(updateVisaStatus({ id: id, visaStatus: value }));
 	};
 
 	return (
@@ -175,31 +171,27 @@ const Tablecomponent = ({ data, openModal }) => {
 										</td>
 										<td className='p-4 whitespace-nowrap'>
 											<select
-												value={item.status}
+												value={item.visaStatus}
 												onChange={(e) =>
-													handleStatusChange(index, e.target.value, item.id)
+													handleVisaStatusChange(index, e.target.value, item.id)
 												}
 												className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 ${
-													item.status === 'Approved'
+													item.status === 'Apply for Visa'
 														? 'bg-green-200'
-														: 'bg-yellow-200'
+														: item.status === 'Do Not Apply for Visa'
+														? 'bg-yellow-200'
+														: 'bg-blue-200'
 												}`}>
 												<option value='Pending'>Pending</option>
-												<option
-													value='Selected'
-													className={`${
-														item.status === 'Approved' ? 'bg-green' : ''
-													}`}>
-													Selected
+												<option value='Apply for Visa'>Apply for Visa</option>
+												<option value='Do Not Apply for Visa'>
+													Do Not Apply for Visa
 												</option>
-												<option value='Rejected'>Rejected</option>
-												<option value='Refunded'>Refunded</option>
 											</select>
 										</td>
 										<td className='p-4 whitespace-nowrap space-x-2'>
 											<button
 												type='button'
-												onClick={() => handleEdit(item.id)} // Add this line
 												className='text-white bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm inline-flex items-center px-3 py-2 text-center'>
 												<svg
 													className='mr-2 h-5 w-5'
@@ -217,9 +209,7 @@ const Tablecomponent = ({ data, openModal }) => {
 											</button>
 											<button
 												type='button'
-												onClick={() =>
-													dispatch(deleteUserData({ id: item.id }))
-												}
+												onClick={() => dispatch(deleteAllUserData())}
 												// onClick={handleDeleteAll()}
 												className='text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-3 py-2 text-center'>
 												<svg
@@ -245,6 +235,4 @@ const Tablecomponent = ({ data, openModal }) => {
 			</div>
 		</div>
 	);
-};
-
-export default Tablecomponent;
+}

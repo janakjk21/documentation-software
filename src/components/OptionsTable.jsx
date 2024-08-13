@@ -1,7 +1,11 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-export default function OptionsTable({ openModal }) {
+export default function OptionsTable({ openModal, id }) {
+	const companyUrlId = useSelector((state) => state.visaStatus.companyUrlId);
+	console.log(companyUrlId, 'this is the company url id');
+
 	return (
 		<div>
 			<div className='sm:flex'>
@@ -10,7 +14,7 @@ export default function OptionsTable({ openModal }) {
 						<li className='m-1'>
 							<button className='inline-flex items-center justify-center text-base font-semibold rounded-full border bg-blue-600 text-white px-4 py-2'>
 								<Link
-									to='/table' // Update with the actual path
+									to={`/table/${companyUrlId}`} // Update with the actual path
 									style={{ textDecoration: 'none', color: 'inherit' }}>
 									all
 									<span className='ml-2 bg-yellow-500 rounded-full px-2 py-1'>
@@ -20,23 +24,43 @@ export default function OptionsTable({ openModal }) {
 							</button>
 						</li>
 						<li className='m-1'>
-							<button className='inline-flex items-center justify-center text-base font-semibold rounded-full border border-gray-200 bg-red-600 text-white px-4 py-2'>
-								Rejected
-								<span className='ml-2 bg-red-500 rounded-full px-2 py-1'>
-									19
-								</span>
+							<button className='inline-flex items-center justify-center text-base font-semibold rounded-full border bg-red-600 text-white px-4 py-2'>
+								<Link
+									to='/rejected' // Update with the actual path
+									style={{ textDecoration: 'none', color: 'inherit' }}>
+									Rejected
+									<span className='ml-2 bg-yellow-500 rounded-full px-2 py-1'>
+										126
+									</span>
+								</Link>
 							</button>
 						</li>
 						<li className='m-1'>
-							<button className='inline-flex items-center justify-center text-base font-semibold rounded-full border border-gray-200 bg-green-600 text-white px-4 py-2'>
-								Selected
-								<span className='ml-2 bg-green-500 rounded-full px-2 py-1'>
-									14
-								</span>
+							<button className='inline-flex items-center justify-center text-base font-semibold rounded-full border bg-green-600 text-white px-4 py-2'>
+								<Link
+									to='/selected' // Update with the actual path
+									style={{ textDecoration: 'none', color: 'inherit' }}>
+									Selected
+									<span className='ml-2 bg-yellow-500 rounded-full px-2 py-1'>
+										126
+									</span>
+								</Link>
 							</button>
 						</li>
 						<li className='m-1'>
-							<button className='inline-flex items-center justify-center text-base font-semibold rounded-full border border-gray-200 bg-yellow-600 text-white px-4 py-2'>
+							<button className='inline-flex items-center justify-center text-base font-semibold rounded-full border bg-orange-600 text-white px-4 py-2'>
+								<Link
+									to='/visa' // Update with the actual path
+									style={{ textDecoration: 'none', color: 'inherit' }}>
+									Visa
+									<span className='ml-2 bg-yellow-500 rounded-full px-2 py-1'>
+										126
+									</span>
+								</Link>
+							</button>
+						</li>
+						<li className='m-1'>
+							<button className='inline-flex items-center justify-center text-base font-semibold rounded-full border border-gray-200 bg-lime-600 text-white px-4 py-2'>
 								<Link
 									to='/shram' // Update with the actual path
 									style={{ textDecoration: 'none', color: 'inherit' }}>

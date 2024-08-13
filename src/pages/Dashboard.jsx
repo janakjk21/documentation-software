@@ -1,51 +1,51 @@
 import React, { useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
 
 import Sidebar from '../partials/Sidebar';
 import Header from '../partials/Header';
-import FilterButton from '../components/DropdownFilter';
-import Datepicker from '../components/Datepicker';
-import DashboardCard01 from '../partials/dashboard/DashboardCard01';
-import DashboardCard02 from '../partials/dashboard/DashboardCard02';
-import DashboardCard03 from '../partials/dashboard/DashboardCard03';
-import DashboardCard04 from '../partials/dashboard/DashboardCard04';
-import DashboardCard05 from '../partials/dashboard/DashboardCard05';
-import DashboardCard06 from '../partials/dashboard/DashboardCard06';
-import DashboardCard07 from '../partials/dashboard/DashboardCard07';
-import DashboardCard08 from '../partials/dashboard/DashboardCard08';
-import DashboardCard09 from '../partials/dashboard/DashboardCard09';
-import DashboardCard10 from '../partials/dashboard/DashboardCard10';
-import DashboardCard11 from '../partials/dashboard/DashboardCard11';
-import DashboardCard12 from '../partials/dashboard/DashboardCard12';
-import DashboardCard13 from '../partials/dashboard/DashboardCard13';
 import Banner from '../partials/Banner';
 import DataTable from './DataTable';
-import CompanyProfileCard from '../components/CompanyProfileCard';
-import CompanyProfileModal from '../components/CompanyProfileModal'; // Import the modal component
-import { useLocation } from 'react-router-dom';
 import ProfileData from './profileData';
 import Componydemand from './Componydemand';
 import ShramTable from './ShramTable';
+import Selectedpage from './Selectedpage';
+import Rejectedpage from './Rejectedpage';
+import Visapage from './Visapage';
+import Staffpage from './Staffpage';
+import Prepremmision from './Prepremission';
 
 function Dashboard() {
 	const location = useLocation();
-	let content;
-	switch (location.pathname) {
-		case '/':
-			content = <Componydemand />;
-			break;
-		case '/table':
-			content = <DataTable />;
-			break;
-		case '/profile':
-			content = <ProfileData />;
-			break;
-		case '/shram':
-			content = <ShramTable />;
-			break;
-		default:
-			content = <div> no component </div>;
-	}
 	const [sidebarOpen, setSidebarOpen] = useState(false);
+
+	// Determine the content to display based on the current path
+	const getContent = (path) => {
+		const { id } = useParams();
+		switch (path) {
+			case `/country/${id}`:
+				return <Componydemand id={id} />;
+			case `/table/${id}`:
+				return <DataTable id={id} />;
+			case '/shram':
+				return <ShramTable />;
+			case '/selected':
+				return <Selectedpage />;
+			case '/rejected':
+				return <Rejectedpage />;
+			case '/visa':
+				return <Visapage />;
+			case '/staff':
+				return <Staffpage />;
+			case '/premission':
+				return <Prepremmision />;
+
+			default:
+				if (path.startsWith(`/profile/`)) {
+					return <ProfileData id={id} />;
+				}
+				return <div>No component</div>;
+		}
+	};
 
 	const handleSave = (data) => {
 		// Handle the data saved from modal
@@ -60,22 +60,19 @@ function Dashboard() {
 
 			{/* Content area */}
 			<div className='relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden'>
-				{/*  Site header */}
-				<Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+				{/* Header */}
+				{/* <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> */}
 
-				<main className='grow'>
+				<main>
 					<div className='px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto'>
-						{/* Dashboard actions */}
+						{/* Banner */}
+						<Banner />
 
-						{/* Cards */}
-						<div className='grid'>{content}</div>
+						{/* Main content */}
+						{getContent(location.pathname)}
 					</div>
 				</main>
-
-				<Banner />
 			</div>
-
-			{/* Company Profile Modal */}
 		</div>
 	);
 }
