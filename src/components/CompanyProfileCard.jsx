@@ -1,49 +1,52 @@
+import axios from 'axios';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { deleteProfile } from '../redux/companyProfileSlice';
 import { Link } from 'react-router-dom';
-import { updateState } from '../redux/visaStatusSlice';
+import { toast } from 'react-toastify';
+// Ensure these are correctly imported
 
-function CompanyProfileCard({ profile }) {
+const CompanyProfileCard = ({ data, handleDelete }) => {
 	const {
-		companyCode,
-		LTNo,
-		ageMax,
-		ageMin,
-		categories,
-		contractYear,
+		category,
+		company_code,
+		contract_year,
 		country,
-		countryId,
 		demand,
 		female,
 		id,
-		interviewType,
+		interview_type,
 		logo,
+		lot_no,
 		male,
+		max_age,
+		min_age,
 		name,
 		pax,
 		remarks,
 		salary,
-	} = profile;
+	} = data;
+	console.log(id);
+
 	const dispatch = useDispatch();
 
-	const handleDelete = () => {
-		dispatch(deleteProfile(profile.id));
-	};
-
 	const handleUrlIdSave = () => {
-		dispatch(updateState({ type: 'companyUrlId', value: profile.id }));
+		// dispatch(updateState({ type: 'companyUrlId', value: profile.id }));
 	};
 
 	return (
 		<div className='max-w-sm bg-white border border-gray-200 rounded-lg shadow-lg p-6 m-4'>
 			<div className='flex items-center justify-between mb-4'>
 				<h2 className='text-2xl font-bold text-gray-800'>{name}</h2>
+				<button
+					onClick={() => handleDelete(id)}
+					className='text-red-500 hover:text-red-700'>
+					Delete
+				</button>
 			</div>
 			<div className='mb-4'>
-				{logo && logo.length > 0 && (
+				{logo && typeof logo === 'object' && (
 					<img
-						src={URL.createObjectURL(logo[0])}
+						src={URL.createObjectURL(logo)}
 						alt='Company Logo'
 						className='w-full h-32 object-cover rounded-lg'
 					/>
@@ -51,22 +54,16 @@ function CompanyProfileCard({ profile }) {
 			</div>
 			<div className='space-y-2'>
 				<p>
-					<strong>Company Code:</strong> {companyCode}
+					<strong>Category:</strong> {category}
 				</p>
 				<p>
-					<strong>LT No:</strong> {LTNo}
+					<strong>Company Code:</strong> {company_code}
 				</p>
 				<p>
-					<strong>Age Range:</strong> {ageMin} - {ageMax}
+					<strong>Contract Year:</strong> {contract_year}
 				</p>
 				<p>
-					<strong>Categories:</strong> {categories}
-				</p>
-				<p>
-					<strong>Contract Year:</strong> {contractYear}
-				</p>
-				<p>
-					<strong>Country:</strong> {country} ({countryId})
+					<strong>Country:</strong> {country}
 				</p>
 				<p>
 					<strong>Demand:</strong> {demand}
@@ -78,10 +75,13 @@ function CompanyProfileCard({ profile }) {
 					<strong>Male:</strong> {male}
 				</p>
 				<p>
-					<strong>Pax:</strong> {pax}
+					<strong>Max Age:</strong> {max_age}
 				</p>
 				<p>
-					<strong>Interview Type:</strong> {interviewType}
+					<strong>Min Age:</strong> {min_age}
+				</p>
+				<p>
+					<strong>Pax:</strong> {pax}
 				</p>
 				<p>
 					<strong>Remarks:</strong> {remarks}
@@ -89,22 +89,17 @@ function CompanyProfileCard({ profile }) {
 				<p>
 					<strong>Salary:</strong> {salary}
 				</p>
-			</div>
-			<div className='mt-4 flex justify-between'>
-				<Link
-					to={`/table/${id}`}
+				<p>
+					<strong>Interview Type:</strong> {interview_type}
+				</p>
+				<button
 					onClick={handleUrlIdSave}
 					className='text-blue-500 hover:text-blue-700'>
-					View Details
-				</Link>
-				<button
-					onClick={handleDelete}
-					className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700'>
-					Delete
+					<Link to={`/table/${id}`}>So details</Link>
 				</button>
 			</div>
 		</div>
 	);
-}
+};
 
 export default CompanyProfileCard;

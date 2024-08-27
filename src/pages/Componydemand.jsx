@@ -1,23 +1,59 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CompanyProfileCard from '../components/CompanyProfileCard';
 import CompanyProfileModal from '../components/CompanyProfileModal';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+
 export default function Componydemand({ id }) {
 	const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 	const companyProfiles = useSelector((state) => state.companyProfile); // Example selector for company profiles
-
+	const [demandData, setDemandData] = useState([]);
 	const handleOpenModal = () => setIsModalOpen(true);
 	const handleCloseModal = () => setIsModalOpen(false);
+
 	const handleSave = (data) => {
 		// Handle the data saved from modal
 		console.log('Company data saved:', data);
 		// Optionally, you could update the state or send data to an API here
 	};
-	const filteredProfiles = companyProfiles.filter(
-		(profile) => profile.countryId === id
-	);
-	console.log('id', filteredProfiles);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const response = await axios.get('http://127.0.0.1:8000/demand/');
+				const data = response.data;
+				// Process the data as needed
+				console.log('Data:', data);
+				setDemandData(data);
+			} catch (error) {
+				console.error('Error:', error);
+			}
+		};
+
+		fetchData();
+	}, []);
+	const handleDelete = (id) => {
+		axios
+			.delete(`http://127.0.0.1:8000/demand/`, { data: { id } })
+			.then((response) => {
+				// Handle success
+				console.log(response);
+				toast.success('Data deleted successfully');
+				setDemandData(demandData.filter((data) => data.id !== id));
+				// dispatch(deleteProfile(id));
+				// Rerender the component or update the state to reflect the deletion
+				// For example, you can dispatch an action to update the state in Redux
+			})
+			.catch((error) => {
+				// Handle error
+				toast.error('Error deleting data');
+				console.log(error);
+			});
+	};
+
 	return (
 		<div className='p-4'>
 			<div className='sm:flex'>
@@ -63,18 +99,43 @@ export default function Componydemand({ id }) {
 			</div>
 			<div className='container mx-auto p-4'>
 				<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-					{filteredProfiles.map((profile, index) => (
-						<CompanyProfileCard key={index} profile={profile} id={id} />
-					))}
+					{demandData.length === 0 ? (
+						<div className='flex items-center justify-center h-64'>
+							{/* Add your loading animation here */}
+							<p>Loading...</p>
+						</div>
+					) : (
+						demandData.map((data) => (
+							<CompanyProfileCard
+								data={data}
+								key={data.id}
+								id={id}
+								handleDelete={handleDelete}
+							/>
+						))
+					)}
 				</div>
 			</div>
-			9
 			<CompanyProfileModal
 				isOpen={isModalOpen}
 				onClose={handleCloseModal}
 				onSave={handleSave}
 				id={id}
+				demand={setDemandData}
 			/>
+			<ToastContainer
+				position='bottom-right'
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+				theme='light'
+				transition:Bounce
+			/>{' '}
 		</div>
 	);
 }

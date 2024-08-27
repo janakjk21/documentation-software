@@ -6,11 +6,33 @@ import { createStaff } from '../redux/staff';
 const StaffFormModal = ({ isOpen, onClose }) => {
 	const { register, handleSubmit, reset } = useForm();
 	const dispatch = useDispatch();
+	const onSubmit = async (data) => {
+		const formData = new FormData();
+		formData.append('email', data.email);
+		formData.append('password', data.password);
+		formData.append('avatar', data.avatar[0]); // Assuming avatar is a file input
+		formData.append('name', data.name);
+		formData.append('is_admin_user', data.is_admin_user ? 'True' : 'False');
 
-	const onSubmit = (data) => {
-		dispatch(createStaff(data));
-		reset();
-		onClose();
+		try {
+			const response = await fetch('http://127.0.0.1:8000/users/register', {
+				method: 'POST',
+				body: formData,
+			});
+
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+
+			const result = await response.json();
+			console.log('Success:', result);
+
+			dispatch(createStaff(result));
+			reset();
+			onClose();
+		} catch (error) {
+			console.error('Error:', error);
+		}
 	};
 
 	if (!isOpen) return null;
@@ -21,20 +43,12 @@ const StaffFormModal = ({ isOpen, onClose }) => {
 				<h2 className='text-2xl mb-4'>Add Staff</h2>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className='mb-4'>
-						<label className='block text-gray-700'>Name</label>
+						<label className='block text-gray-700'>Avatar</label>
 						<input
-							type='text'
-							{...register('name', { required: true })}
-							className='w-full p-2 border border-gray-300 rounded mt-1'
-							required
-						/>
-					</div>
-					<div className='mb-4'>
-						<label className='block text-gray-700'>Avatar URL</label>
-						<input
-							type='text'
+							type='file'
 							{...register('avatar', { required: true })}
 							className='w-full p-2 border border-gray-300 rounded mt-1'
+							accept='image/*'
 							required
 						/>
 					</div>
@@ -55,6 +69,10 @@ const StaffFormModal = ({ isOpen, onClose }) => {
 							className='w-full p-2 border border-gray-300 rounded mt-1'
 							required
 						/>
+					</div>
+					<div className='mb-4'>
+						<label className='block text-gray-700'>Admin</label>
+						<input type='checkbox' {...register('isAdmin')} className='mt-1' />
 					</div>
 					<button type='submit' className='bg-blue-500 text-white p-2 rounded'>
 						Submit

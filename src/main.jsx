@@ -5,18 +5,15 @@ import ThemeProvider from './utils/ThemeContext';
 import App from './App';
 
 import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import store, { persistor } from './redux/store';
+import store from './redux/store';
+
 ReactDOM.createRoot(document.getElementById('root')).render(
 	<React.StrictMode>
 		<Router>
 			<ThemeProvider>
 				<Provider store={store}>
-					<PersistGate loading={null} persistor={persistor}>
-						<App />
-					</PersistGate>
+					<App />
 				</Provider>
-				,
 			</ThemeProvider>
 		</Router>
 	</React.StrictMode>

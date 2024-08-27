@@ -3,9 +3,6 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 export default function OptionsTable({ openModal, id }) {
-	const companyUrlId = useSelector((state) => state.visaStatus.companyUrlId);
-	console.log(companyUrlId, 'this is the company url id');
-
 	return (
 		<div>
 			<div className='sm:flex'>
@@ -14,7 +11,7 @@ export default function OptionsTable({ openModal, id }) {
 						<li className='m-1'>
 							<button className='inline-flex items-center justify-center text-base font-semibold rounded-full border bg-blue-600 text-white px-4 py-2'>
 								<Link
-									to={`/table/${companyUrlId}`} // Update with the actual path
+									to={`/table/${id}`} // Update with the actual path
 									style={{ textDecoration: 'none', color: 'inherit' }}>
 									all
 									<span className='ml-2 bg-yellow-500 rounded-full px-2 py-1'>

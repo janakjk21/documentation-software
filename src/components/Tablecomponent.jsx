@@ -121,14 +121,14 @@ const Tablecomponent = ({ data, openModal }) => {
 													<Link to={`/profile/${item.id}`}>{item.name}</Link>{' '}
 												</div>
 												<div className='text-sm font-normal text-gray-500'>
-													{item.passportNo}
+													{item.passport_no}
 												</div>
 											</div>
 										</td>
 										<td className='p-4 whitespace-nowrap text-base font-medium text-gray-900'>
 											<input
 												type='checkbox'
-												checked={item.medical}
+												checked={item.is_medical}
 												className='bg-gray-50 border-gray-300 focus:ring-3 focus:ring-cyan-200 h-4 w-4 rounded'
 												readOnly
 											/>
@@ -136,7 +136,7 @@ const Tablecomponent = ({ data, openModal }) => {
 										<td className='p-4 whitespace-nowrap text-base font-medium text-gray-900'>
 											<input
 												type='checkbox'
-												checked={item.originalPassport}
+												checked={item.is_original_passport}
 												className='bg-gray-50 border-gray-300 focus:ring-3 focus:ring-cyan-200 h-4 w-4 rounded'
 												readOnly
 											/>
@@ -144,7 +144,7 @@ const Tablecomponent = ({ data, openModal }) => {
 										<td className='p-4 whitespace-nowrap text-base font-medium text-gray-900'>
 											<input
 												type='checkbox'
-												checked={item.policeReport}
+												checked={item.is_police_report}
 												className='bg-gray-50 border-gray-300 focus:ring-3 focus:ring-cyan-200 h-4 w-4 rounded'
 												readOnly
 											/>
@@ -152,7 +152,7 @@ const Tablecomponent = ({ data, openModal }) => {
 										<td className='p-4 whitespace-nowrap text-base font-medium text-gray-900'>
 											<input
 												type='checkbox'
-												checked={item.photo}
+												checked={item.is_photo}
 												className='bg-gray-50 border-gray-300 focus:ring-3 focus:ring-cyan-200 h-4 w-4 rounded'
 												readOnly
 											/>
@@ -160,7 +160,7 @@ const Tablecomponent = ({ data, openModal }) => {
 										<td className='p-4 whitespace-nowrap text-base font-medium text-gray-900'>
 											<input
 												type='checkbox'
-												checked={item.video}
+												checked={item.is_video}
 												className='bg-gray-50 border-gray-300 focus:ring-3 focus:ring-cyan-200 h-4 w-4 rounded'
 												readOnly
 											/>
@@ -168,7 +168,7 @@ const Tablecomponent = ({ data, openModal }) => {
 										<td className='p-4 whitespace-nowrap text-base font-medium text-gray-900'>
 											<input
 												type='checkbox'
-												checked={item.certificate}
+												checked={item.is_certificate}
 												className='bg-gray-50 border-gray-300 focus:ring-3 focus:ring-cyan-200 h-4 w-4 rounded'
 												readOnly
 											/>
@@ -199,7 +199,7 @@ const Tablecomponent = ({ data, openModal }) => {
 										<td className='p-4 whitespace-nowrap space-x-2'>
 											<button
 												type='button'
-												onClick={() => handleEdit(item.id)} // Add this line
+												onClick={() => handleEdit(item.id)}
 												className='text-white bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm inline-flex items-center px-3 py-2 text-center'>
 												<svg
 													className='mr-2 h-5 w-5'
@@ -220,7 +220,6 @@ const Tablecomponent = ({ data, openModal }) => {
 												onClick={() =>
 													dispatch(deleteUserData({ id: item.id }))
 												}
-												// onClick={handleDeleteAll()}
 												className='text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-3 py-2 text-center'>
 												<svg
 													className='mr-2 h-5 w-5'

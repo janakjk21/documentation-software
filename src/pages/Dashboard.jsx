@@ -13,6 +13,7 @@ import Rejectedpage from './Rejectedpage';
 import Visapage from './Visapage';
 import Staffpage from './Staffpage';
 import Prepremmision from './Prepremission';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Dashboard() {
 	const location = useLocation();
@@ -57,7 +58,6 @@ function Dashboard() {
 		<div className='flex h-screen overflow-hidden'>
 			{/* Sidebar */}
 			<Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
 			{/* Content area */}
 			<div className='relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden'>
 				{/* Header */}

@@ -1,85 +1,68 @@
 import React, { useEffect } from 'react';
 import Modal from 'react-modal';
 import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+
 import {
 	saveUserData,
 	updateUserData,
 	deleteUserData,
 } from '../redux/tableSlice'; // Adjust the import according to your file structure
+import { useCreateDemandMutation } from '../redux/apitabledata';
 
 // Set the root element for the modal
 Modal.setAppElement('#root');
 
-const ModalInitialUser = ({ isOpen, onClose }) => {
-	const dispatch = useDispatch();
-	const userId = useSelector((state) => state.visaStatus.userId);
-	const data = useSelector((state) => state.table.data);
+const ModalInitialUser = ({ loseModal, isModalOpen, companyId }) => {
+	const { register, handleSubmit, reset } = useForm();
+	const isOpen = isModalOpen;
+	const onClose = loseModal;
 
-	const initialData = data.find((item) => item.id === userId);
-	console.log(initialData, 'this is the initial data');
-	const { register, handleSubmit, setValue } = useForm();
+	const [createDemand, { isLoading, isError, isSuccess }] =
+		useCreateDemandMutation();
 
-	const companyUrlId = useSelector((state) => state.visaStatus.companyUrlId);
-	useEffect(() => {
-		if (initialData) {
-			Object.keys(initialData).forEach((key) => {
-				if (
-					key === 'avatar' ||
-					key === 'medical' ||
-					key === 'originalPassport' ||
-					key === 'policeReport' ||
-					key === 'photo' ||
-					key === 'video' ||
-					key === 'certificate'
-				) {
-					// Handle file inputs
-					try {
-						const fileData = initialData[key];
-						console.log(`Processing file for key: ${key}`, fileData);
-						if (
-							fileData instanceof FileList &&
-							fileData.length > 0 &&
-							fileData[0].name &&
-							fileData[0].type &&
-							fileData[0].size > 0
-						) {
-							const file = new File([fileData[0]], fileData[0].name, {
-								type: fileData[0].type,
-							});
-							setValue(key, file);
-							console.log(`File set for key: ${key}`);
-						} else {
-							console.warn(`Invalid file data for key: ${key}`, fileData);
-						}
-					} catch (error) {
-						console.error(`Error setting file for key: ${key}`, error);
-					}
-				} else {
-					// Handle other inputs
-					setValue(key, initialData[key]);
-					console.log(`Value set for key: ${key}`);
+	const onSubmit = async (data) => {
+		const formData = new FormData();
+		//ToDo: problem occours here for the file submit
+		// Append regular text fields
+		formData.append('name', data.name);
+		formData.append('passport_no', data.passport_no);
+		formData.append('address', data.address);
+		formData.append('status', 'pending');
+		formData.append('passport_expiry', data.passport_expiry);
+
+		// Append file inputs
+		if (data.avatar[0]) formData.append('avatar', data.avatar[0]);
+		if (data.medical[0]) formData.append('medical', data.medical[0]);
+		if (data.original_passport[0])
+			formData.append('original_passport', data.original_passport[0]);
+		if (data.police_report[0])
+			formData.append('police_report', data.police_report[0]);
+		if (data.photo[0]) formData.append('photo', data.photo[0]);
+		if (data.video[0]) formData.append('video', data.video[0]);
+		if (data.certificate[0])
+			formData.append('certificate', data.certificate[0]);
+
+		try {
+			const response = await axios.post(
+				'http://127.0.0.1:8000/demand/1/userdemand',
+				formData,
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data',
+					},
 				}
-			});
-		}
-	}, [initialData, setValue]);
+			);
 
-	const onSubmit = (formData) => {
-		formData.companyId = companyUrlId;
-		formData.age = calculateAge(formData.dateOfBirth);
-		console.log(formData, 'this is the data');
-
-		dispatch(saveUserData(formData));
-
-		onClose();
-	};
-
-	const handleDelete = () => {
-		if (initialData && initialData.id) {
-			dispatch(deleteUserData(initialData.id));
-			onClose();
+			console.log('Response:', response.data);
+			reset(); // Reset form after successful submission
+			onClose(); // Close the modal
+		} catch (error) {
+			console.error('Submission error:', error);
+			// Handle error (e.g., display an error message)
 		}
 	};
+	const handleDelete = () => {};
 
 	const calculateAge = (dob) => {
 		const birthDate = new Date(dob);
@@ -114,13 +97,19 @@ const ModalInitialUser = ({ isOpen, onClose }) => {
 							{...register('name')}
 						/>
 					</div>
-
+					<div className='mb-4'>
+						<label className='block text-gray-700'>Passport</label>
+						<input
+							className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+							{...register('passport_no')}
+						/>
+					</div>
 					<div className='mb-4'>
 						<label className='block text-gray-700'>Passport Expiry Date</label>
 						<input
 							type='date'
 							className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-							{...register('passportExpiryDate')}
+							{...register('passport_expiry')}
 						/>
 					</div>
 
@@ -135,14 +124,14 @@ const ModalInitialUser = ({ isOpen, onClose }) => {
 						<label className='block text-gray-700'>Nominee Name</label>
 						<input
 							className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-							{...register('nomineeName')}
+							{...register('nominee_name')}
 						/>
 					</div>
 					<div className='mb-4'>
 						<label className='block text-gray-700'>Contact No</label>
 						<input
 							className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-							{...register('contactNo')}
+							{...register('contact_no')}
 						/>
 					</div>
 					<div className='mb-4'>
@@ -170,7 +159,7 @@ const ModalInitialUser = ({ isOpen, onClose }) => {
 						<label className='block text-gray-700'>Work Experience</label>
 						<input
 							className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-							{...register('workExperience')}
+							{...register('workexperience')}
 						/>
 					</div>
 				</div>
@@ -196,7 +185,7 @@ const ModalInitialUser = ({ isOpen, onClose }) => {
 						<input
 							type='file'
 							className='mt-1 block w-full text-gray-700'
-							{...register('originalPassport')}
+							{...register('original_passport')}
 						/>
 					</div>
 					<div className='mb-4'>
@@ -204,7 +193,7 @@ const ModalInitialUser = ({ isOpen, onClose }) => {
 						<input
 							type='file'
 							className='mt-1 block w-full text-gray-700'
-							{...register('policeReport')}
+							{...register('police_report')}
 						/>
 					</div>
 					<div className='mb-4'>
@@ -238,14 +227,13 @@ const ModalInitialUser = ({ isOpen, onClose }) => {
 						className='bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600'>
 						Submit
 					</button>
-					{initialData && initialData.id && (
-						<button
-							type='button'
-							onClick={handleDelete}
-							className='bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600'>
-							Delete
-						</button>
-					)}
+
+					<button
+						type='button'
+						onClick={handleDelete}
+						className='bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600'>
+						Delete
+					</button>
 				</div>
 			</form>
 		</Modal>

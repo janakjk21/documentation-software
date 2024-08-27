@@ -2,22 +2,68 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { saveProfile } from '../redux/companyProfileSlice';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
-function CompanyProfileModal({ isOpen, onClose, onSave, profile, id }) {
+function CompanyProfileModal({ isOpen, onClose, onSave, profile, demand }) {
 	const { register, handleSubmit, reset } = useForm({
 		defaultValues: profile || {},
 	});
-	const dispatch = useDispatch();
+	// submit logic
+	const onSubmit = async (data) => {
+		const formData = new FormData();
+		for (const key in data) {
+			if (
+				key === 'logo' &&
+				data[key] instanceof FileList &&
+				data[key].length > 0
+			) {
+				formData.append(key, data[key][0]);
+			} else {
+				formData.append(key, data[key]);
+			}
+		}
+		try {
+			const response = await axios.post(
+				'http://127.0.0.1:8000/demand/',
+				formData
+			);
+			console.log(response.data, 'response');
+			// Handle the response if needed
+			// Show a toast for successful creation
+			toast.success('🦄 created successfully !', {
+				position: 'bottom-right',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'light',
+			});
+			// Set the same data on the demand
+			demand(data);
 
-	const onSubmit = (data) => {
-		const updatedData = {
-			...data,
-			countryId: id, // Ensure countryId is includ
-		};
-		dispatch(saveProfile(updatedData));
-		reset();
-		onSave();
+			// Re-render the parent component
+			onSave();
+		} catch (error) {
+			// Handle the error if needed
+			console.error(error);
+			// Show a toast for error
+			toast.error('🦄 something went wrong !', {
+				position: 'bottom-right',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'light',
+			});
+		}
 	};
+
 	if (!isOpen) return null;
 	return (
 		<div className='fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50'>
@@ -43,7 +89,7 @@ function CompanyProfileModal({ isOpen, onClose, onSave, profile, id }) {
 							</label>
 							<input
 								type='text'
-								{...register('LTNo')}
+								{...register('lot_no')}
 								className='w-full p-2 border border-gray-300 rounded'
 							/>
 						</div>
@@ -53,11 +99,15 @@ function CompanyProfileModal({ isOpen, onClose, onSave, profile, id }) {
 							<label className='block text-gray-700 dark:text-gray-300'>
 								Country
 							</label>
-							<input
-								type='text'
+							<select
 								{...register('country')}
-								className='w-full p-2 border border-gray-300 rounded'
-							/>
+								className='w-full p-2 border border-gray-300 rounded'>
+								<option value=''>Select Country</option>
+								<option value='Malaysia'>Malaysia</option>
+								<option value='Dubai'>Dubai</option>
+								<option value='Qatar'>Qatar</option>
+								<option value='Kuwait'>Kuwait</option>
+							</select>
 						</div>
 						<div className='flex-1'>
 							<label className='block text-gray-700 dark:text-gray-300'>
@@ -78,7 +128,7 @@ function CompanyProfileModal({ isOpen, onClose, onSave, profile, id }) {
 								</label>
 								<input
 									type='text'
-									{...register('categories')}
+									{...register('category')}
 									className='w-full p-2 border border-gray-300 rounded'
 									placeholder='Enter categories separated by commas'
 								/>
@@ -102,7 +152,6 @@ function CompanyProfileModal({ isOpen, onClose, onSave, profile, id }) {
 							</label>
 							<input
 								type='file'
-								accept='image/*'
 								{...register('logo')}
 								className='w-full p-2 border border-gray-300 rounded'
 							/>
@@ -115,7 +164,7 @@ function CompanyProfileModal({ isOpen, onClose, onSave, profile, id }) {
 								type='number'
 								min='18'
 								max='65'
-								{...register('ageMin')}
+								{...register('min_age')}
 								className='w-full p-2 border border-gray-300 rounded'
 							/>
 						</div>
@@ -127,7 +176,7 @@ function CompanyProfileModal({ isOpen, onClose, onSave, profile, id }) {
 								type='number'
 								min='18'
 								max='65'
-								{...register('ageMax')}
+								{...register('max_age')}
 								className='w-full p-2 border border-gray-300 rounded'
 							/>
 						</div>
@@ -149,8 +198,7 @@ function CompanyProfileModal({ isOpen, onClose, onSave, profile, id }) {
 							</label>
 							<input
 								type='number'
-								step='0.1'
-								{...register('Componycode')}
+								{...register('company_code')}
 								className='w-full p-2 border border-gray-300 rounded'
 							/>
 						</div>
@@ -184,7 +232,7 @@ function CompanyProfileModal({ isOpen, onClose, onSave, profile, id }) {
 							</label>
 							<input
 								type='text'
-								{...register('interviewType')}
+								{...register('interview_type')}
 								className='w-full p-2 border border-gray-300 rounded'
 							/>
 						</div>
@@ -194,7 +242,7 @@ function CompanyProfileModal({ isOpen, onClose, onSave, profile, id }) {
 							</label>
 							<input
 								type='number'
-								{...register('contractYear')}
+								{...register('contract_year')}
 								className='w-full p-2 border border-gray-300 rounded'
 							/>
 						</div>
@@ -223,6 +271,19 @@ function CompanyProfileModal({ isOpen, onClose, onSave, profile, id }) {
 					</div>
 				</form>
 			</div>
+			<ToastContainer
+				position='bottom-right'
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+				theme='light'
+				transition:Bounce
+			/>{' '}
 		</div>
 	);
 }
